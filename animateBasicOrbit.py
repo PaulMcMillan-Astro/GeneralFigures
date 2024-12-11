@@ -201,7 +201,7 @@ else:
     plt.draw()
     plt.close(fig)
     display(HTML(ani.to_html5_video()))
-    
+
 
 # %%
 # Animate three orbits with same starting point, energy and Lz

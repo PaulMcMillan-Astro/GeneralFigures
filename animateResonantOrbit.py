@@ -252,4 +252,4 @@ else:
     plt.draw()
     plt.close(fig)
     display(HTML(ani.to_html5_video()))
-    
+

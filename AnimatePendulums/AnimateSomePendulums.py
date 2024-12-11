@@ -705,6 +705,9 @@ for i in range(0, t.size, di):
 # ## Plots for notes
 
 # %%
+plt.rcParams.keys()
+
+# %%
 
 plt.rcParams.update({
     "axes.facecolor": "white",
@@ -722,7 +725,8 @@ plt.rcParams.update({
      'ytick.minor.visible' : True, 
      'ytick.right' : False,
      'xtick.direction' : 'in', 
-     'ytick.direction' :'in',})
+     'ytick.direction' :'in',
+     'font.size' : 14,})
 
 # %%
 fig, ax = plt.subplots(1, 1, figsize=(5, 5))
@@ -740,8 +744,16 @@ th = np.linspace(0, 2*np.pi, 100)
 x = np.sin(th)
 y = np.cos(th)
 
+rng = np.random.default_rng(12345)
+
+randomphase = rng.integers(low=0, high=len(th), size=6)
+#randint(low=0, high=len(th), size = 6)
+
+
 for l in range(1, 6):
     ax.plot(scale*l*x, scale*l*y, lw=2, c='k')
+    ax.plot(scale*l*x[randomphase[l-1]], scale*l*y[randomphase[l-1]], '.', c='k', markersize=20)
+
 plt.xlabel(r'$\theta$ [rad]')
 plt.ylabel(r'$p_\theta\,/\,(ml^{5/2}g^{-1/2})$')
 plt.xticks([-0.1, -0.05, 0, 0.05, 0.1])
@@ -749,9 +761,11 @@ plt.yticks([-0.1, -0.05, 0, 0.05, 0.1], labels = [r'$-0.1$', r'$-0.05$', '0', r'
 if arrows:
     for i in range(1,6):
         plt.quiver(0.005, -scale*i, -0.1, 0, width=0.05, color='k')
-    plt.savefig('images/low_amplitude.png', dpi=300)
+    plt.tight_layout()
+    plt.savefig('images/low_amplitude.pdf', dpi=300)
 else:
-    plt.savefig('images/low_amplitude_no_arrows.png', dpi=300)
+    plt.tight_layout()
+    plt.savefig('images/low_amplitude_no_arrows.pdf', dpi=300)
 plt.show()
 
 # %%
@@ -781,7 +795,7 @@ npenduli = len(dthetadt_array)
 y0 = np.concatenate(
     [np.zeros(npenduli)[:, np.newaxis], dthetadt_array[:, np.newaxis]], axis=1
 )
-#print (dthetadt_array)
+print (dthetadt_array)
 
 def deriv_full(y, t, L1):
     """Return the first derivatives of y = theta1, z1, theta2, z2."""
@@ -799,17 +813,32 @@ for i in range(npenduli):
     all_output.append(y)
 
 
+rng = np.random.default_rng(12345)
+
+
+
 for i in range(npenduli):
     if np.max(all_output[i][:,0]) > np.pi:
         all_output[i][:,0] = all_output[i][:,0] - (2*np.pi)
     elif np.min(all_output[i][:,0]) < -np.pi:
         all_output[i][:,0] = all_output[i][:,0] + (2*np.pi)
     ax.plot(all_output[i][:,0], all_output[i][:,1]/np.sqrt(g), lw=1, c='k')
+    # The below didn't quite work
+    #tmp_rand = rng.integers(low=0, high=len(all_output[i][:,0]), size=1)
+    #ax.plot(all_output[i][tmp_rand,0], all_output[i][tmp_rand,1]/np.sqrt(g), '.', c='k', markersize=20)
 
 
+for yq in dthetadt_array:
+    if(yq>0):
+        plt.quiver(0.005, yq/np.sqrt(g), 0.1, 0, width=0.03, color='k')
+    elif(yq<-2*np.sqrt(g)):
+        plt.quiver(0.005, yq/np.sqrt(g), -0.1, 0, width=0.03, color='k')
 
 plt.xlabel(r'$\theta$ [rad]')
 plt.ylabel(r'$p_\theta\,/\,(ml^{5/2}g^{-1/2})$')
+plt.tight_layout()
+plt.savefig('images/full_pendulum_phase_space.pdf', dpi=300)
+
 plt.show()
 
 
