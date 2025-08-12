@@ -6,9 +6,9 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: base
 #     language: python
 #     name: python3
 # ---
@@ -155,6 +155,78 @@ ani = animation.ArtistAnimation(fig, ims, interval=40, blit=True,
 
 if SaveAnim: 
     ani.save('OrbitAnimations/SingleXYXZOrbit.mp4')
+else:
+    plt.draw()
+    plt.close(fig)
+    display(HTML(ani.to_html5_video()))
+
+# %% [markdown]
+# ## Now two orbits of different angular momentum
+
+# %%
+SaveAnim = True
+
+
+xv_ini = np.array([8.21, 0.014, 0,
+                   -51.1/Phi.kpc_Myr_to_km_s,
+                   87.25/Phi.kpc_Myr_to_km_s,
+                   (-163.1-12.24)/Phi.kpc_Myr_to_km_s])
+
+t_eval=np.linspace(0,1300,5000)
+
+OrbitPath, _ = OI.getOrbitPathandStats(xv_ini,t_eval)
+
+Rb    = OrbitPath[:,0]
+zb    = OrbitPath[:,1]
+phib  = OrbitPath[:,2]-np.pi/2 # shift to put at x,y = 0,-8.21 at the start
+#vR   = OrbitPath[:,3]
+#vz   = OrbitPath[:,4]
+#vphi = OrbitPath[:,5]
+
+fig, ax = plt.subplots(1,2, figsize=(10,5),facecolor='k')
+ims = []
+
+#im = ax.imshow(img, extent=[-17, 17, -17, 17])
+
+for i in range(501):
+    lines, = ax[0].plot((R*np.cos(phi))[0:i*10],(R*np.sin(phi))[0:i*10],c='w', lw=0.5)
+    lines_z, = ax[1].plot((R*np.cos(phi))[0:i*10],z[0:i*10],c='w', lw=0.5)
+    linesb, = ax[0].plot((Rb*np.cos(phib))[0:i*10],(Rb*np.sin(phib))[0:i*10],c='hotpink', lw=0.5)
+    lines_zb, = ax[1].plot((Rb*np.cos(phib))[0:i*10],zb[0:i*10],c='hotpink', lw=0.5)
+    if i==0: 
+        sca_xy = ax[0].scatter((R*np.cos(phi))[0],(R*np.sin(phi))[0],s=100,c='gold', marker = '*')
+        sca_z  = ax[1].scatter((R*np.cos(phi))[0],z[0],s=100,c='gold', marker = '*')
+        sca_xyb = ax[0].scatter((Rb*np.cos(phib))[0],(Rb*np.sin(phib))[0],s=100,c='rebeccapurple', marker = '*')
+        sca_zb  = ax[1].scatter((Rb*np.cos(phib))[0],zb[0],s=100,c='rebeccapurple', marker = '*')
+    else: 
+        sca_xy = ax[0].scatter((R*np.cos(phi))[i*10-1],(R*np.sin(phi))[i*10-1],s=100,c='gold', marker = '*')
+        sca_z  = ax[1].scatter((R*np.cos(phi))[i*10-1],z[i*10-1],s=100,c='gold', marker = '*')
+        sca_xyb = ax[0].scatter((Rb*np.cos(phib))[i*10-1],(Rb*np.sin(phib))[i*10-1],s=100,c='rebeccapurple', marker = '*')
+        sca_zb  = ax[1].scatter((Rb*np.cos(phib))[i*10-1],zb[i*10-1],s=100,c='rebeccapurple', marker = '*')
+    #lines.append(sca_xy)
+    #lines_z.append(sca_z)
+    ims.append([lines, lines_z, sca_xy, sca_z, linesb, lines_zb, sca_xyb, sca_zb])
+
+for a in ax:
+    a.set_aspect('equal')
+    #a.axis('off')
+    a.set_xlim(-17,17)
+    a.set_ylim(-17,17)
+    a.set_facecolor('k')
+    for side in ['left', 'bottom']:
+        a.spines[side].set_color('w')
+    a.xaxis.label.set_color('w')
+    a.yaxis.label.set_color('w')
+
+    a.set_xlabel('x', color='w', weight='bold', fontsize=20, labelpad=-5)
+ax[0].set_ylabel('y', color='w', weight='bold', fontsize=20, labelpad=-20)
+ax[1].set_ylabel('z', color='w', weight='bold', fontsize=20, labelpad=-20)
+
+ani = animation.ArtistAnimation(fig, ims, interval=40, blit=True,
+                                repeat_delay=5000, repeat=True)
+
+if SaveAnim: 
+    ani.save('OrbitAnimations/DoubleXYXZOrbit.mp4')
 else:
     plt.draw()
     plt.close(fig)

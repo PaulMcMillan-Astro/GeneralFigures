@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: base
 #     language: python
@@ -208,7 +208,7 @@ def accelerating_precessing_warp(R, phi, R0=8., z0=0.9, phi0=np.pi, vphi_scale=5
 omega = -np.pi/220.
 
 
-R_ring = np.linspace(0, 15, 20)
+R_ring = np.linspace(0, 15, 10)
 R_star = np.linspace(0, 15, 10)[3:]
 phi_ring = np.linspace(0, 2*np.pi, 180)
 phi_star = np.zeros_like(R_star)
@@ -601,6 +601,48 @@ plt.draw()
 plt.close(fig)
 display(HTML(ani.to_html5_video()))
 
+# %%
+
+plt.figure(figsize=(10, 10))
+
+R_lon = np.linspace(-15, 15, 10)
+phi_lon = np.pi * np.ones_like(R_lon)
+
+def lon_xy(R, phi):
+    return R * np.cos(phi), R * np.sin(phi)
+x_lon = R_lon * np.cos(phi_lon)
+y_lon = R_lon * np.sin(phi_lon)
+z_lon = np.zeros_like(R_lon)
+
+omega = -np.pi/200.
+
+
+ax = plt.axes(projection='3d')
+
+z_ring_t = precessing_warp_height(R_ring, phi_ring, omega=omega, t=844)
+
+ringlist = []
+for i in range(x_ring.shape[0]):
+    ringlist.append(ax.plot3D(x_ring[i], y_ring[i], z_ring_t[i], 'w-', lw=0.5)[0])
+
+x_lon, y_lon = lon_xy(R_lon, phi_lon + omega*844)
+lon = ax.plot3D(x_lon, y_lon, z_lon, 'w:')[0]
+dphi = dphidt(R_star) * 844
+
+
+sca = ax.scatter3D(R_star*np.cos(phi_star + dphi), R_star*np.sin(phi_star + dphi), 
+                   precessing_warp_height(R_star, phi_star + dphi, omega=omega, t=844), 
+                   marker='*', c=precessing_warp_velocity(R_star, phi_star + dphi, omega=omega, t=844), 
+                   cmap='bwr', vmin=-5, vmax=5, s=120)
+
+#ax.plot3D(x.flatten(), y.flatten(), z.flatten(), 'k.')
+ax.set_aspect('equal')
+ax.view_init(elev=30, azim=0)
+
+ax.set_axis_off()
+
+plt.show()
+
 # %% [markdown]
 # ### Plan view
 
@@ -613,8 +655,8 @@ R_ring2, phi_ring2 = np.meshgrid(R_ring2, phi_ring2, indexing='ij')
 x_ring2 = R_ring2 * np.cos(phi_ring2)
 y_ring2 = R_ring2 * np.sin(phi_ring2)
 z_ring2 = np.zeros_like(x_ring2)
-z_ring2 = precessing_warp_height(R_ring2, phi_ring2, phi0=np.pi, omega = -np.pi/200., t=0)
-vz_ring2 = precessing_warp_velocity(R_ring2, phi_ring2, phi0=np.pi, omega = -np.pi/200., t=0)
+z_ring2 = precessing_warp_height(R_ring2, phi_ring2, phi0=np.pi, omega = -np.pi/200., t=844)
+vz_ring2 = precessing_warp_velocity(R_ring2, phi_ring2, phi0=np.pi, omega = -np.pi/200., t=844)
 
 
 ax = plt.axes(projection='3d')

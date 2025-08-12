@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: base
 #     language: python
@@ -19,6 +19,7 @@
 # ### As MakeMWVideos:
 # v0 - Hack something together for Uppsala talk to match Simon's spiral  
 # v1 - also hack something together to match phase spiral animation
+# v2 - Change picture to new SPW one
 
 # %% [markdown]
 #
@@ -47,7 +48,7 @@ from IPython.display import HTML
 # Put the Hurt pic where I want it and show a sector
 
 # %%
-img = plt.imread("MilkyWay background.jpg")
+img = plt.imread("images/MilkyWay_SPW_reduced.jpg")
 R0 = 8
 
 
@@ -125,7 +126,7 @@ def drawPhiboxLabel(phimin, phimax, ax):
 
 # %%
 fig, ax = plt.subplots(figsize=(5,5))
-ax.imshow(img, extent=[-19, 19, -19, 19])
+ax.imshow(img, extent=[-20, 20, -20, 20])
 #ax.plot(R*np.cos(phi),R*np.sin(phi),c='r')
 ax.set_aspect('equal')
 ax.axis('off')
@@ -146,7 +147,7 @@ plt.show()
 
 # %%
 fig, ax = plt.subplots(figsize=(5,5))
-ax.imshow(img, extent=[-19, 19, -19, 19])
+ax.imshow(img, extent=[-20, 20, -20, 20])
 #ax.plot(R*np.cos(phi),R*np.sin(phi),c='r')
 ax.set_aspect('equal')
 ax.axis('off')
@@ -169,7 +170,7 @@ plt.show()
 # %%
 ims = []
 fig, ax = plt.subplots(figsize=(5,5), facecolor='black')
-ax.imshow(img, extent=[-19, 19, -19, 19])
+ax.imshow(img, extent=[-20, 20, -20, 20])
 
 n_frames = 60-1
 phi_st = np.linspace(201.6,147.5,n_frames)
@@ -202,7 +203,7 @@ plt.close(fig)
 # %%
 ims = []
 fig, ax = plt.subplots(figsize=(5,5), facecolor='black')
-ax.imshow(img, extent=[-19, 19, -19, 19])
+ax.imshow(img, extent=[-20, 20, -20, 20])
 
 dl, width = 2,10
 for lmin in np.arange(130,230+dl-width,dl):
@@ -241,7 +242,7 @@ PHIlim = 0.10
 
 ims = []
 fig, ax = plt.subplots(figsize=(5,5), facecolor='black')
-ax.imshow(img, extent=[-19, 19, -19, 19])
+ax.imshow(img, extent=[-20, 20, -20, 20])
 
 
 for Rmin in np.arange(Rcmin, Rcmax-Rcwidth+dRc, dRc):
